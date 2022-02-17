@@ -1,0 +1,49 @@
+apiVersion: v1
+data:
+  elastic: ZWZrcnVsZXNhbHNvbG9nZ2luZ2lzYXdlc29tZTEyMzQ1NkA=
+kind: Secret
+metadata:
+  name: elasticsearch-logging-es-elastic-user #https://github.com/elastic/cloud-on-k8s/issues/967
+---
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch-logging
+spec:
+  version: 7.16.3
+  nodeSets:
+  - name: default
+    count: 1
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms8g -Xmx8g
+          resources:
+            requests:
+              memory: 8Gi
+              cpu: 2
+            limits:
+              memory: 8Gi
+              cpu: 2
+    podTemplate:
+      spec:
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+    config:
+      node.store.allow_mmap: false
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Gi
+        storageClassName: gp2
