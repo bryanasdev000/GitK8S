@@ -2,6 +2,7 @@ apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
   name: kibana-logging
+  namespace: logging
 spec:
   version: 7.16.3
   podTemplate:

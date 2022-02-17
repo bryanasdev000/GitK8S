@@ -4,11 +4,14 @@ data:
 kind: Secret
 metadata:
   name: elasticsearch-logging-es-elastic-user #https://github.com/elastic/cloud-on-k8s/issues/967
+  namespace: logging
 ---
 apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
   name: elasticsearch-logging
+  namespace: logging
+---
 spec:
   version: 7.16.3
   nodeSets:
